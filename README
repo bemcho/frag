@@ -4,6 +4,8 @@ Program: Frag - a FPS i put together using Haskell and with Yampa
 
 Year: 2005, 2007-8
 
+Builds with ghc 8.0.2
+
 License: GPL
 
 Usage: $ frag leveleg
@@ -21,7 +23,12 @@ or
     runhaskell Setup build
     runhaskell Setup install
 
-Controls: mouse moves around the view, 'w'\'a'\'s'\'d' to move and strafe, 'e to jump, 'z' and 'x' to lock and unlock the mouse, left click to fire.
+or
+    ./buildFrag.sh for all above
+
+Controls: mouse moves around the view, 'w'\'a'\'s'\'d' to move and strafe, 'space to jump, 'z' and 'x' to lock and unlock the mouse, left click to fire.
+
+./runFrag.sh to run with default leveleg
 
 cheers,
 Mun
