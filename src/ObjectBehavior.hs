@@ -1293,57 +1293,35 @@ strafeKS speed
           | otherwise = v
 
 fallingp :: SF (Bool, GameInput) Double
-fallingp
-  = (arr (\ (lnd, gi) -> (gi, lnd)) >>>
-       (first keyStat >>> arr (\ (key, lnd) -> (key, (key, lnd)))) >>>
-         (first (arr (\ key -> key == Event ('e', True)) >>> arr jump2Vel)
-            >>> arr (\ (_, (key, lnd)) -> ((key, lnd), (key, lnd))))
-           >>>
+fallingp =
+    arr (\(lnd, gi) -> (gi, lnd)) >>>
+    (first keyStat >>> arr (\(key, lnd) -> (key, (key, lnd)))) >>>
+    (first (arr (\key -> key == Event (' ', True)) >>> arr jump2Vel) >>>
+     arr (\(_, (key, lnd)) -> ((key, lnd), (key, lnd)))) >>>
+    (first (arr (\(key, lnd) -> key == Event (' ', True) && (lnd == True)) >>> arr bool2Ev) >>>
+     arr (\(jumping, (key, lnd)) -> (lnd, (jumping, key, lnd)))) >>>
+    ((first (arr (\lnd -> (lnd == True)) >>> edge) >>>
+      loop
+          (arr (\((landed, (jumping, key, lnd)), middleOfJump) -> ((key, lnd, middleOfJump), (jumping, lnd, landed))) >>>
            (first
-              (arr (\ (key, lnd) -> key == Event ('e', True) && (lnd == True))
-                 >>> arr bool2Ev)
-              >>> arr (\ (jumping, (key, lnd)) -> (lnd, (jumping, key, lnd))))
-             >>>
-             ((first (arr (\ lnd -> (lnd == True)) >>> edge) >>>
-                 loop
-                   (arr
-                      (\ ((landed, (jumping, key, lnd)), middleOfJump) ->
-                         ((key, lnd, middleOfJump), (jumping, lnd, landed)))
-                      >>>
-                      (first
-                         (arr
-                            (\ (key, lnd, middleOfJump) ->
-                               case
-                                 (middleOfJump == False && key == Event ('e', True) && lnd == True)
-                                 of
-                                   True -> True
-                                   False -> case (lnd == True) of
-                                                True -> False
-                                                False -> middleOfJump)
-                            >>> (iPre False <<< identity))
-                         >>>
-                         arr
-                           (\ (middleOfJump, (jumping, lnd, landed)) ->
-                              ((jumping, lnd, landed, middleOfJump), middleOfJump)))))
-                >>>
-                arr
-                  (\ (jumping, lnd, landed, middleOfJump) ->
-                     ((lnd, middleOfJump), (jumping, landed))))
-               >>>
-               (first
-                  (arr
-                     (\ (lnd, middleOfJump) ->
-                        (lnd == False && middleOfJump == False))
-                     >>> edge)
-                  >>>
-                  arr
-                    (\ (notlanded, (jumping, landed)) ->
-                       ((),
-                        (jumping `tag` falling' (- 200 :: Double) (40 :: Double)) `lMerge`
-                          (landed `tag` constant (- 5.0e-2))
-                          `lMerge`
-                          (notlanded `tag` falling' (- 200 :: Double) (0 :: Double)))))
-                 >>> drSwitch (falling' (- 200 :: Double) (0 :: Double)))
+                (arr
+                     (\(key, lnd, middleOfJump) ->
+                          case (middleOfJump == False && key == Event (' ', True) && lnd == True) of
+                              True -> True
+                              False ->
+                                  case (lnd == True) of
+                                      True -> False
+                                      False -> middleOfJump) >>>
+                 (iPre False <<< identity)) >>>
+            arr (\(middleOfJump, (jumping, lnd, landed)) -> ((jumping, lnd, landed, middleOfJump), middleOfJump))))) >>>
+     arr (\(jumping, lnd, landed, middleOfJump) -> ((lnd, middleOfJump), (jumping, landed)))) >>>
+    (first (arr (\(lnd, middleOfJump) -> (lnd == False && middleOfJump == False)) >>> edge) >>>
+     arr
+         (\(notlanded, (jumping, landed)) ->
+              ( ()
+              , (jumping `tag` falling' (-200 :: Double) (40 :: Double)) `lMerge` (landed `tag` constant (-5.0e-2)) `lMerge`
+                (notlanded `tag` falling' (-200 :: Double) (0 :: Double))))) >>>
+    drSwitch (falling' (-200 :: Double) (0 :: Double))
 
 falling' :: Double -> Double -> SF () Double
 falling' grav int

@@ -15,6 +15,8 @@ Requirements: A graphics card with support for multitexturing and vertex arrays
 Building:
     ghc --make -O2 -fglasgow-exts main.hs
 or
+    cabal install --dependencies-only
+
     runhaskell Setup configure --user --prefix=/home/foo
     runhaskell Setup build
     runhaskell Setup install
