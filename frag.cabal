@@ -92,7 +92,7 @@ Executable frag
                  , hashtables
                  , random
    Hs-source-dirs: src
-   Ghc-options:    -O2 -funbox-strict-fields -optc-O2
+   Ghc-options:    -O2 -threaded -rtsopts -with-rtsopts=-N  -funbox-strict-fields -optc-O2
    Extensions:     BangPatterns
                  , FunctionalDependencies
                  , FlexibleInstances
