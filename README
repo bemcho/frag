@@ -13,7 +13,12 @@ Usage: $ frag leveleg
 'leveleg' can be an arbitrary Quake III Arena level; a default level is provided in this package, and is installed in 'share/frag-1.1', wherever that is. For example, if it's installed into ~/bin, and frag occupies ~/bin/frag, a successful invocation might be 'frag ../share/frag-1.1/leveleg'.
 
 Requirements: A graphics card with support for multitexturing and vertex arrays
-
+First time:
+ 
+ stack init
+ stack setup
+ stack install
+ 
 Building:
     ghc --make -O2 -fglasgow-exts main.hs
 or
